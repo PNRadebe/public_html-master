@@ -7,25 +7,28 @@
 $link = mysqli_connect("localhost", "root", "", "academicsTracker2");
 
 if(isset($_POST['submit']))
-{	
+{
 	$submit = $_POST['submit'];
-	
 }
-	
+
 if($link === false)
 {
     die("ERROR: Could not connect. " . mysqli_connect_error());
 }
 
 $connectDb = mysqli_select_db($link, 'academicsTracker2');
-	
-$query = $link->query("SELECT * FROM student WHERE student_id=$submit");
 
+$query = $link->query("SELECT * FROM student WHERE student_id=$submit"); //fetches data for the entered id
 
-//$result = mysqli_query ($link, $query);
-
-$row1 = $query->fetch_assoc();
-
+//code below checks if the user id exists
+if (mysqli_num_rows($query) == 1) //1 row means the id exists
+{
+	$row1 = $query->fetch_assoc();
+}
+else
+{
+	header ('location: unsuccessfulSearch.php'); //0 rows means that the user id does not exist. It can never be 2 rows because the user id is a primary key therefor it is unique and occurs only once.
+}
 
 ?>
 
@@ -124,6 +127,10 @@ $row1 = $query->fetch_assoc();
             <h3>User Information</h3><br>
         <form action="EditStudentProfile.php" name = "student_form" method="post" enctype="multipart/form-data">
 
+			<label for="student_id"><b>Student ID <abbr class="req" title="required">*</abbr></b></label> <span id="error-fname" span style = "float: right"></span><br>
+            <input type="text" name="student_id" id ="student_id" value="<?php echo $row1['student_id']; ?>"  maxlength = "20" readonly /><br>
+
+			<hr>
 
 			<label for="student_first_name"><b>First Name <abbr class="req" title="required">*</abbr></b></label> <span id="error-fname" span style = "float: right"></span><br>
             <input type="text" name="student_first_name" id ="student_first_name" value="<?php echo $row1['student_first_name']; ?>"  maxlength = "20" readonly /><br>
@@ -194,21 +201,21 @@ $row1 = $query->fetch_assoc();
 			<input  type="radio" name="user_type" id="user_type" value="Student" checked="checked" readonly /><br>
 
 			<hr>
-			
+
 			<label for="password"><b>Create Password <abbr class="req" title="required">*</abbr>:</b></label> <span id="error-pass" span style = "float: right"></span><br>
             <input type="password" name="password" value="<?php echo $row1['password']; ?>" id="password" size="25" readonly /><br>
-						
+
 
 			<hr>
-           
-			
+
+
 		   <label for="cPassword"><b>Confirm Password <abbr class="req" title="required">*</abbr>:</b></label> <span id="error-pass2" span style = "float: right"></span><br>
 		   <input type="password" name="cPassword" id="cPassword" value="<?php echo $row1['cPassword']; ?>"  size="25" required><br>
 
 			<hr>
 
             <input type="submit" name = "Edit" value = "Edit" onclick = "EditStudentProfile.php" />
-			
+
             </form>
 
             <button class="button" onclick="goBack()">Back </button>
@@ -249,7 +256,7 @@ $row1 = $query->fetch_assoc();
 
 </body>
 </html>
-<?php	
+<?php
 // Close connection
 mysqli_close($link);
 ?>

@@ -7,18 +7,16 @@
 server with default setting (user 'root' with no password) */
 
 $link = mysqli_connect("localhost", "root", "", "academicsTracker2");
- 
+
 // Check connection
 if($link === false){
     die("ERROR: Could not connect. " . mysqli_connect_error());
 }
- 
+
 $connectDb = mysqli_select_db($link, 'academicsTracker2');
 
-
-
 ?>
-   
+
 <html lang="en">
 <head>
 <title>Search Teacher</title>
@@ -88,7 +86,7 @@ $connectDb = mysqli_select_db($link, 'academicsTracker2');
 		</div>
 	</div>
 </div>
-	
+
 	<!-- Home -->
 
 	<div class="home">
@@ -105,35 +103,16 @@ $connectDb = mysqli_select_db($link, 'academicsTracker2');
 	<div class="contact">
 		<div class="container">
 				<div class="col-lg-8">
+
+          <!--code belows allows user to search for a teacher using their ID-->
                                     <h2> Enter Teacher ID</h2>
                                     <form class="search" action="ViewTeacherProfile.php" method = "post">
-                                        
+
                                     <input type="text" placeholder="Search..." name="submit">
                                     <button type="submit"><i class="fa fa-search"></i></button>
-                                    
+
                                     </form>
 
-<?php
-
-	if(isset($_POST['submit'])) //accepts id entered in textfield
-	{	
-		$submit = $_POST['submit'];	
-		
-			$query = "SELECT * FROM teacher WHERE teacher_id='submit'";	//selects from teacher table
-			$query2 = "SELECT * FROM contacts WHERE teacher_id='submit'"; //selects from contacts table
-		
-			$result = mysqli_query ($link, $query);
-			$result2 = mysqli_query ($link, $query2);
-			
-			
-		}
-	
-		
-
-?>
-    
-    
-    
 				</div>
 		</div>
 	</div>
@@ -178,7 +157,7 @@ $connectDb = mysqli_select_db($link, 'academicsTracker2');
 </body>
 </html>
 
-<?php	
+<?php
 // Close connection
 mysqli_close($link);
 ?>

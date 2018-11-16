@@ -7,26 +7,30 @@
 $link = mysqli_connect("localhost", "root", "", "academicsTracker2");
 
 if(isset($_POST['submit']))
-{	
+{
 	$submit = $_POST['submit'];
-	
 }
-	
+
 if($link === false)
 {
     die("ERROR: Could not connect. " . mysqli_connect_error());
 }
 
 $connectDb = mysqli_select_db($link, 'academicsTracker2');
-	
-$query = $link->query("SELECT * FROM teacher WHERE teacher_id=$submit");
-$query2 = $link->query("SELECT * FROM contacts WHERE teacher_id=$submit");
 
-$row1 = $query->fetch_assoc();
-$row2 = $query2->fetch_assoc();
+$query = $link->query("SELECT * FROM teacher WHERE teacher_id=$submit"); //fetches data for the entered id
+
+//code below checks if the user id exists
+if (mysqli_num_rows($query) == 1) //1 row means the id exists
+{
+	$row1 = $query->fetch_assoc();
+}
+else
+{
+	header ('location: unsuccessfulSearch.php'); //0 rows means that the user id does not exist. It can never be 2 rows because the user id is a primary key therefor it is unique and occurs only once.
+}
+
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -54,7 +58,7 @@ $row2 = $query2->fetch_assoc();
 			<div class="logo_container">
 				<div class="logo">
 					<img src="images/logo.png" alt="">
-					<span>AT: Administrator</span>
+					<span>AT: Teacher</span>
 				</div>
 			</div>
 
@@ -62,7 +66,7 @@ $row2 = $query2->fetch_assoc();
 			<nav class="main_nav_container">
 				<div class="main_nav">
 					<ul class="main_nav_list">
-						<li class="main_nav_item"><a href="Administrator.html">HOME</a></li>
+						<li class="main_nav_item"><a href="Teacher.html">HOME</a></li>
 						<li class="main_nav_item"><a href="subdir/about_Us.html">ABOUT US</a></li>
 						<li class="main_nav_item"><a href="subdir/contact.html">CONTACT</a></li>
 						<li class="main_nav_item"><a href="profile.html">PROFILE</a></li>
@@ -93,7 +97,7 @@ $row2 = $query2->fetch_assoc();
 		<div class="menu_inner menu_mm">
 			<div class="menu menu_mm">
 				<ul class="menu_list menu_mm">
-					<li class="menu_item menu_mm"><a href="Administrator.html">HOME</a></li>
+					<li class="menu_item menu_mm"><a href="Teacher.html">HOME</a></li>
 					<li class="menu_item menu_mm"><a href="subdir/about_Us.html">ABOUT US</a></li>
 					<li class="menu_item menu_mm"><a href="subdir/contact.html">CONTACT US</a></li>
 					<li class="menu_item menu_mm"><a href="profile.html">PROFILE</a></li>
@@ -121,6 +125,10 @@ $row2 = $query2->fetch_assoc();
             <h3>User Information</h3><br>
         <form action="EditTeacherProfile.php" name = "teacher_form" method="post" enctype="multipart/form-data">
 
+			<label for="teacher_id"><b>Teacher ID <abbr class="req" title="required">*</abbr></b></label> <span id="error-fname" span style = "float: right"></span><br>
+            <input type="text" name="teacher_id" id ="teacher_id" value="<?php echo $row1['teacher_id']; ?>"  maxlength = "20" readonly /><br>
+
+			<hr>
 
 			<label for="teacher_first_name"><b>First Name <abbr class="req" title="required">*</abbr></b></label> <span id="error-fname" span style = "float: right"></span><br>
             <input type="text" name="teacher_first_name" id ="teacher_first_name" value="<?php echo $row1['teacher_first_name']; ?>"  maxlength = "20" readonly /><br>
@@ -152,7 +160,7 @@ $row2 = $query2->fetch_assoc();
 			<hr>
 
 			<label for="contact_number"><b>Phone Number <abbr class="req" title="required">*</abbr></b></label> <span id="error-phone" span style = "float: right"></span><br>
-            <input type="text" name="contact_number" value="<?php echo $row2['contact_number']; ?>" id = "contact_number" maxlength = "15" readonly /><br>
+            <input type="text" name="contact_number" value="<?php echo $row1['contact_number']; ?>" id = "contact_number" maxlength = "15" readonly /><br>
 
 			<hr>
 
@@ -160,22 +168,22 @@ $row2 = $query2->fetch_assoc();
 
 
 			<label for="house number"><b>House Number <abbr class="req" title="required">*</abbr></b></label> <span id="error-housen" span style = "float: right"></span><br>
-            <input type="text" name="house_number" value="<?php echo $row2['house_number']; ?>" id="house_number" maxlength = "6" readonly /><br>
+            <input type="text" name="house_number" value="<?php echo $row1['house_number']; ?>" id="house_number" maxlength = "6" readonly /><br>
 
 			<hr>
 
 			<label for="street name"><b>Street Name <abbr class="req" title="required">*</abbr></b></label> <span id="error-streetn" span style = "float: right"></span><br>
-            <input type="text" name="street_name" value="<?php echo $row2['street_name']; ?>" id="street_name" maxlength = "25" readonly /><br>
+            <input type="text" name="street_name" value="<?php echo $row1['street_name']; ?>" id="street_name" maxlength = "25" readonly /><br>
 
 			<hr>
 
 			<label for="suburb"><b>Suburb <abbr class="req" title="required">*</abbr></b></label> <span id="error-sub" span style = "float: right"></span><br>
-            <input type="text" name="suburb" value="<?php echo $row2['suburb']; ?>" id="suburb" maxlength = "25" readonly /><br>
+            <input type="text" name="suburb" value="<?php echo $row1['suburb']; ?>" id="suburb" maxlength = "25" readonly /><br>
 
 			<hr>
 
 			<label for="post code"><b>Post Code <abbr class="req" title="required">*</abbr></b></label> <span id="error-pcode" span style = "float: right"></span><br>
-            <input type="text" name="post_code" value="<?php echo $row2['post_code']; ?>" id="post_code" maxlength = "10" readonly /><br>
+            <input type="text" name="post_code" value="<?php echo $row1['post_code']; ?>" id="post_code" maxlength = "10" readonly /><br>
 
 			<hr>
 
@@ -192,25 +200,20 @@ $row2 = $query2->fetch_assoc();
 
 			<hr>
 
-            <label for="teacher_id"><b>Create User ID <abbr class="req" title="required">*</abbr>:</b></label> <span id="error-adid" span style = "float: right"></span><br>
-            <input type="text" name="teacher_id" value="<?php echo $row1['teacher_id']; ?>" id="teacher_id" maxlength="8" readonly /><br>
-
-			<hr>
-			
 			<label for="password"><b>Create Password <abbr class="req" title="required">*</abbr>:</b></label> <span id="error-pass" span style = "float: right"></span><br>
             <input type="password" name="password" value="<?php echo $row1['password']; ?>" id="password" size="25" readonly /><br>
-						
+
 
 			<hr>
-           
-			
+
+
 		   <label for="cPassword"><b>Confirm Password <abbr class="req" title="required">*</abbr>:</b></label> <span id="error-pass2" span style = "float: right"></span><br>
 		   <input type="password" name="cPassword" id="cPassword" value="<?php echo $row1['cPassword']; ?>"  size="25" required><br>
 
 			<hr>
 
             <input type="submit" name = "Edit" value = "Edit" onclick = "EditTeacherProfile.php" />
-			
+
             </form>
 
             <button class="button" onclick="goBack()">Back </button>
@@ -251,7 +254,7 @@ $row2 = $query2->fetch_assoc();
 
 </body>
 </html>
-<?php	
+<?php
 // Close connection
 mysqli_close($link);
-?>
+?>`

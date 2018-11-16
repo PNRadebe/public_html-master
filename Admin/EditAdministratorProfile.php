@@ -7,23 +7,22 @@
 $link = mysqli_connect("localhost", "root", "", "academicsTracker2");
 
 if(isset($_POST["admin_id"]))
-{	
+{
 	$id = $_POST['admin_id'];
-	
+
 }
-	
+
 if($link === false)
 {
     die("ERROR: Could not connect. " . mysqli_connect_error());
 }
 
 $connectDb = mysqli_select_db($link, 'academicsTracker2');
-	
-$query = $link->query("SELECT * FROM administrator WHERE admin_id=$id");
-$query2 = $link->query("SELECT * FROM contacts WHERE admin_id=$id");
+
+$query = $link->query("SELECT * FROM administrator WHERE admin_id=$id"); //selects information about the user id entered
 
 $row1 = $query->fetch_assoc();
-$row2 = $query2->fetch_assoc();
+
 
 ?>
 
@@ -116,11 +115,17 @@ $row2 = $query2->fetch_assoc();
         <div class="container">
             <br><h2>Edit Administrator Profile</h2>
 
+<!--code belows allows user to edit an administrator's profile-->
             <br>
 
             <h3>User Information</h3><br>
         <form action="UpdateAdministratorProfile.php" name = "admin_form" method="post" enctype="multipart/form-data" onsubmit = "return validateAllFields(this)">
 
+			<label for="admin_id"><b>Edit User ID <abbr class="req" title="required">*</abbr>:</b></label> <span id="error-adid" span style = "float: right"></span><br>
+            <input type="text" name="admin_id" value="<?php echo $row1['admin_id']; ?>" id="admin_id" maxlength="8" readonly /><br>
+
+
+			<hr>
 
 			<label for="admin_first_name"><b>First Name <abbr class="req" title="required">*</abbr></b></label> <span id="error-fname" span style = "float: right"></span><br>
             <input type="text" name="admin_first_name" id ="admin_first_name" value="<?php echo $row1['admin_first_name']; ?>" onblur ="validateFirstName(admin_first_name)"  maxlength = "20" required /><br>
@@ -156,7 +161,7 @@ $row2 = $query2->fetch_assoc();
 				<option value="black">Black</option>
 				<option value="asian">Asian</option>
 			</select>
-			
+
 			<hr>
 
 			<label for="date_of_birth"> <b>Date of Birth <abbr class="req" title="required">*</abbr>:</b></label> <span id ="error-date" span style = "float: right"></span><br>
@@ -165,7 +170,7 @@ $row2 = $query2->fetch_assoc();
 			<hr>
 
 			<label for="contact_number"><b>Phone Number <abbr class="req" title="required">*</abbr></b></label> <span id="error-phone" span style = "float: right"></span><br>
-            <input type="text" name="contact_number" value="<?php echo $row2['contact_number']; ?>" onblur = "validatePhoneNumber (contact_number)" id = "contact_number" maxlength = "15" required /><br>
+            <input type="text" name="contact_number" value="<?php echo $row1['contact_number']; ?>" onblur = "validatePhoneNumber (contact_number)" id = "contact_number" maxlength = "15" required /><br>
 
 			<hr>
 
@@ -173,22 +178,22 @@ $row2 = $query2->fetch_assoc();
 
 
 			<label for="house number"><b>House Number <abbr class="req" title="required">*</abbr></b></label> <span id="error-housen" span style = "float: right"></span><br>
-            <input type="text" name="house_number" value="<?php echo $row2['house_number']; ?>" onblur = "validateHouseNum (house_number)" id="house_number" maxlength = "6" required /><br>
+            <input type="text" name="house_number" value="<?php echo $row1['house_number']; ?>" onblur = "validateHouseNum (house_number)" id="house_number" maxlength = "6" required /><br>
 
 			<hr>
 
 			<label for="street name"><b>Street Name <abbr class="req" title="required">*</abbr></b></label> <span id="error-streetn" span style = "float: right"></span><br>
-            <input type="text" name="street_name" value="<?php echo $row2['street_name']; ?>" onblur = "validateStreetName (street_name)" id="street_name" maxlength = "25" required /><br>
+            <input type="text" name="street_name" value="<?php echo $row1['street_name']; ?>" onblur = "validateStreetName (street_name)" id="street_name" maxlength = "25" required /><br>
 
 			<hr>
 
 			<label for="suburb"><b>Suburb <abbr class="req" title="required">*</abbr></b></label> <span id="error-sub" span style = "float: right"></span><br>
-            <input type="text" name="suburb" value="<?php echo $row2['suburb']; ?>" onblur = "validateSuburb (suburb)" id="suburb" maxlength = "25" required /><br>
+            <input type="text" name="suburb" value="<?php echo $row1['suburb']; ?>" onblur = "validateSuburb (suburb)" id="suburb" maxlength = "25" required /><br>
 
 			<hr>
 
 			<label for="post code"><b>Post Code <abbr class="req" title="required">*</abbr></b></label> <span id="error-pcode" span style = "float: right"></span><br>
-            <input type="text" name="post_code" value="<?php echo $row2['post_code']; ?>" onblur = "validatePostCode (post_code)" id="post_code" maxlength = "10" required /><br>
+            <input type="text" name="post_code" value="<?php echo $row1['post_code']; ?>" onblur = "validatePostCode (post_code)" id="post_code" maxlength = "10" required /><br>
 
 			<hr>
 
@@ -205,25 +210,20 @@ $row2 = $query2->fetch_assoc();
 
 			<hr>
 
-            <label for="admin_id"><b>Create User ID <abbr class="req" title="required">*</abbr>:</b></label> <span id="error-adid" span style = "float: right"></span><br>
-            <input type="text" name="admin_id" value="<?php echo $row1['admin_id']; ?>" id="admin_id" maxlength="8" readonly /><br>
-
-			<hr>
-			
 			<label for="password"><b>Create Password <abbr class="req" title="required">*</abbr>:</b></label> <span id="error-pass" span style = "float: right"></span><br>
             <input type="password" name="password" value="<?php echo $row1['password']; ?>" onblur = "validateCreatePassword (password)" id="password" size="25" required /><br>
-						
+
 
 			<hr>
-           
-			
+
+
 		   <label for="cPassword"><b>Confirm Password <abbr class="req" title="required">*</abbr>:</b></label> <span id="error-pass2" span style = "float: right"></span><br>
-		   <input type="password" name="cPassword" id="cPassword" onblur = "validateConfirmPassword (cPassword)" size="25" required><br>
+		   <input type="password" name="cPassword" id="cPassword" value="<?php echo $row1['password']; ?>"  onblur = "validateConfirmPassword (cPassword)" size="25" required><br>
 
 			<hr>
 
             <input type="submit" value = "Save" name = "Save" onclick = "return validateAllFields()">
-			
+
             </form>
 
             <button class="button" onclick="goBack()">Back </button>
@@ -237,7 +237,7 @@ $row2 = $query2->fetch_assoc();
             <script>
                 ("input[required]").parent("label").addClass("required");
             </script>
-			
+
 			<script>
 			var send = document.getElementsByName("admin_form");
 
@@ -618,26 +618,26 @@ $row2 = $query2->fetch_assoc();
 		}
 
 		function validateConfirmPassword(cPassword)
-	{		
+	{
 		if(password.value != cPassword.value) {
 
 			document.getElementById ("cPassword").style.background = "red";
-			document.getElementById("cPassword").style.display = "inline";	
+			document.getElementById("cPassword").style.display = "inline";
 			document.getElementById('error-pass2').innerHTML = "Passwords Don't Match.";
 			return false;
   } else {
-	document.getElementById("cPassword").style.background = "white";	
-			document.getElementById("cPassword").style.display = "inline";	
-			document.getElementById('error-pass2').innerHTML = "Input Accepted."; 
+	document.getElementById("cPassword").style.background = "white";
+			document.getElementById("cPassword").style.display = "inline";
+			document.getElementById('error-pass2').innerHTML = "Input Accepted.";
 			return true;
   }
-		
+
 		return cPassword;
 	}
-	
+
 
 function validateAllFields ()
-{	
+{
     if((document.getElementById('admin_first_name').style.background == "red") || (document.getElementById('admin_middle_name').style.background == "red") || (document.getElementById('admin_last_name').style.background == "red") || (document.getElementById('gender').style.background == "red") || (document.getElementById('ethnicity').style.background == "red") || (document.getElementById('date_of_birth').style.background == "red") || (document.getElementById('contact_number').style.background == "red") || (document.getElementById('house_number').style.background == "red") || (document.getElementById('street_name').style.background == "red") || (document.getElementById('suburb').style.background == "red") || (document.getElementById('post_code').style.background == "red") || (document.getElementById('school_code').style.background == "red") || (document.getElementById('admin_id').style.background == "red") || (document.getElementById('password').style.background == "red") || (document.getElementById("cPassword").style.background== "red"))
 	{
 					alert('Please ensure that there are no red fields'); //alert window
@@ -677,7 +677,7 @@ function validateAllFields ()
 
 </body>
 </html>
-<?php	
+<?php
 // Close connection
 mysqli_close($link);
 ?>

@@ -6,54 +6,68 @@
 $link = mysqli_connect("localhost", "root", "", "academicsTracker2");
 
 if(isset($_POST["guardian_id"]))
-{	
+{
 	$id = $_POST['guardian_id'];
 }
-	
+
 if($link === false)
 {
     die("ERROR: Could not connect. " . mysqli_connect_error());
 }
 
 $connectDb = mysqli_select_db($link, 'academicsTracker2');
-	
+
+function test_input($data) //cleans user input
+{
+  $data = trim($data); //eliminates unnecessary whitespaces in a string
+  $data = stripslashes($data); //eliminates backslashes
+  $data = htmlspecialchars($data); //converts special characters to html entities
+  return $data; //returns clean data
+}
+
 $query = $link->query("SELECT * FROM guardian WHERE guardian_id=$id");
-$query2 = $link->query("SELECT * FROM contacts WHERE guardian_id=$id");
 
-
-if(isset($_POST['Save'])) 
+//code below allows clean data to be saved
+if(isset($_POST['Save']))
 	{
-		$guardian_first_name = $_POST['guardian_first_name'];
-		$guardian_middle_name = $_POST['guardian_middle_name'];
-		$guardian_last_name = $_POST['guardian_last_name'];
-		$gender = $_POST['gender'];
-		$ethnicity = $_POST['ethnicity'];
-		$date_of_birth = $_POST['date_of_birth'];
-		$contact_number = $_POST['contact_number'];
-		$house_number = $_POST['house_number'];
-		$street_name = $_POST['street_name'];
-		$suburb = $_POST['suburb'];
+		$guardian_first_name = test_input($_POST['guardian_first_name']);
+		$guardian_middle_name = test_input($_POST['guardian_middle_name']);
+		$guardian_last_name = test_input($_POST['guardian_last_name']);
+		$gender = test_input($_POST['gender']);
+		$ethnicity = test_input($_POST['ethnicity']);
+		$date_of_birth = test_input($_POST['date_of_birth']);
+		$contact_number = test_input($_POST['contact_number']);
+		$house_number = test_input($_POST['house_number']);
+		$street_name = test_input($_POST['street_name']);
+		$suburb = test_input($_POST['suburb']);
 		//$school_code = $_POST['school_code'];
-		$post_code = $_POST['post_code'];
-		$password = $_POST['password'];	
-		$user_type = $_POST['user_type'];
-		$id = $_POST['guardian_id'];	
-			
-		
-		$sql = "UPDATE guardian SET guardian_first_name='$guardian_first_name', guardian_middle_name='$guardian_middle_name', guardian_last_name='$guardian_last_name', gender='$gender', ethnicity='$ethnicity', date_of_birth='$date_of_birth', password='$password' WHERE guardian_id=$id";
-		$sql2 = "UPDATE contacts SET contact_number='$contact_number', house_number='$house_number', street_name='$street_name', suburb='$suburb', post_code='$post_code', user_type='$user_type' WHERE guardian_id=$id"; 
-		
-		if((mysqli_query($link, $sql)) && (mysqli_query($link, $sql2)))
+		$post_code = test_input($_POST['post_code']);
+		$password = $_POST['password'];
+		$cPassword = $_POST['cPassword'];
+		$user_type = test_input($_POST['user_type']);
+		$id = test_input($_POST['guardian_id']);
+
+		if ($password != $cPassword)
 		{
-			echo "SUCCESSFUL!";
-				
-								
-		}	
+			echo "Please Check Your Passwords!";
+		}
+		else
+		{
+			$password = md5($password); //Password Encrypted
+			$sql = "UPDATE guardian SET guardian_first_name='$guardian_first_name', guardian_middle_name='$guardian_middle_name', guardian_last_name='$guardian_last_name', gender='$gender', ethnicity='$ethnicity', contact_number='$contact_number', house_number='$house_number', street_name='$street_name', suburb='$suburb', post_code='$post_code', user_type='$user_type', date_of_birth='$date_of_birth', password='$password' WHERE guardian_id=$id";
+		    //$result = mysqli_query($link, $sql);
+		}
+
+		if(mysqli_query($link, $sql))
+		{
+			echo "";
+
+		}
 		else
 		{
 			echo "ERROR: Could Not Able To Execute" . mysqli_error($link);
 		}
-		
+
 	}
 
 
@@ -98,9 +112,9 @@ if(isset($_POST['Save']))
                         <h1></h1>
                     </div>
                 </div>
-            </div>            
+            </div>
             <div class="row course_boxes">
-                <!-- Attendance -->
+                <!-- Search -->
                 <div class="col-lg-4 course_box"><a href="SearchGuardian.php">
                     <div class="card">
                         <div class="card-body text-center">
@@ -115,8 +129,8 @@ if(isset($_POST['Save']))
                     </div></a>
                 </div>
 
-                <!-- Marks -->
-                <div class="col-lg-4 course_box"><a href="Administrator.html">
+                <!-- Home -->
+                <div class="col-lg-4 course_box"><a href="Guardian.html">
                         <div class="card">
                                 <div class="card-body text-center">
                                     <div class="card-title"></div>
@@ -151,7 +165,7 @@ if(isset($_POST['Save']))
 </html>
 
 
-<?php	
+<?php
 // Close connection
 mysqli_close($link);
 ?>
